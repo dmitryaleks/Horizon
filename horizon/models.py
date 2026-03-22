@@ -52,6 +52,21 @@ class ReferenceCase(BaseModel):
     similarity_score: float  # 0.0 - 1.0
 
 
+class DistributionStats(BaseModel):
+    mean: float
+    stdev: float
+    skewness: float
+    coefficient_of_variation: float
+    p25: float
+    p75: float
+    band_width: float  # P90 - P10
+
+
+class InfluentialTask(BaseModel):
+    task: Task
+    weight: float  # normalized Gaussian weight (0.0 - 1.0)
+
+
 class EstimationResult(BaseModel):
     request: EstimationRequest
     team_name: str
@@ -62,3 +77,10 @@ class EstimationResult(BaseModel):
     reference_cases: list[ReferenceCase]
     dataset_size: int
     timestamp: str
+    effort_stats: DistributionStats
+    calendar_stats: DistributionStats
+    prob_exceed_estimate: float
+    historical_accuracy_mean: float
+    historical_accuracy_stdev: float
+    calendar_overhead_mean: float
+    influential_tasks: list[InfluentialTask]

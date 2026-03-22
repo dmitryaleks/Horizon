@@ -19,12 +19,39 @@ def generate_report(result: EstimationResult) -> str:
     pert_effort = (e.p10 + 4 * e.p50 + e.p90) / 6
     pert_calendar = (c.p10 + 4 * c.p50 + c.p90) / 6
 
+    # Serialize influential tasks for JS
+    influential_json = json.dumps([
+        {
+            "id": it.task.id,
+            "name": it.task.name,
+            "story_points": it.task.story_points,
+            "ratio": round(it.task.actual_days / it.task.estimated_days, 2),
+            "weight": round(it.weight * 100, 1),
+        }
+        for it in result.influential_tasks
+    ])
+
+    # Serialize reference cases for scatter plot
+    ref_scatter_json = json.dumps([
+        {
+            "id": rc.task.id,
+            "name": rc.task.name,
+            "story_points": rc.task.story_points,
+            "estimated": rc.task.estimated_days,
+            "actual": rc.task.actual_days,
+            "similarity": round(rc.similarity_score * 100),
+        }
+        for rc in result.reference_cases
+    ])
+
     html = template.render(
         result=result,
         pert_effort=pert_effort,
         pert_calendar=pert_calendar,
         effort_samples_json=json.dumps(result.simulation_samples),
         calendar_samples_json=json.dumps(result.calendar_samples),
+        influential_json=influential_json,
+        ref_scatter_json=ref_scatter_json,
         version=__version__,
     )
     return html

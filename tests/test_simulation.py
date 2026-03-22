@@ -267,6 +267,21 @@ class TestFullPipelineIntegration:
         assert result.dataset_size == 15
         assert result.timestamp
 
+        # New enhanced fields
+        assert 0.0 <= result.prob_exceed_estimate <= 1.0
+        assert result.historical_accuracy_mean > 0
+        assert result.historical_accuracy_stdev >= 0
+        assert result.calendar_overhead_mean > 0
+        assert result.effort_stats.p25 <= result.effort_stats.p75
+        assert result.effort_stats.band_width == pytest.approx(
+            result.effort_days.p90 - result.effort_days.p10
+        )
+        assert result.effort_stats.mean > 0
+        assert result.effort_stats.stdev > 0
+        assert result.calendar_stats.mean > 0
+        assert len(result.influential_tasks) > 0
+        assert result.influential_tasks[0].weight >= result.influential_tasks[-1].weight
+
     def test_custom_top_references(self):
         td = load_team_data(FIXTURE)
         req = make_request(story_points=8, estimate=5.0)

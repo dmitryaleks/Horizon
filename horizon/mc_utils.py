@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from horizon.models import PercentileEstimate, Task
+from horizon.models import DistributionStats, PercentileEstimate, Task
 
 
 def compute_ratios(tasks: list[Task]) -> np.ndarray:
@@ -38,3 +38,33 @@ def extract_percentiles(samples: np.ndarray) -> PercentileEstimate:
     """Extract P10, P50, P90 from a sample array."""
     p10, p50, p90 = np.percentile(samples, [10, 50, 90])
     return PercentileEstimate(p10=float(p10), p50=float(p50), p90=float(p90))
+
+
+def compute_distribution_stats(
+    samples: np.ndarray, pe: PercentileEstimate,
+) -> DistributionStats:
+    """Compute extended distribution statistics from sample array."""
+    mean = float(np.mean(samples))
+    stdev = float(np.std(samples, ddof=1)) if len(samples) > 1 else 0.0
+    p25, p75 = (float(v) for v in np.percentile(samples, [25, 75]))
+
+    # Skewness (scipy-free): m3 / m2^1.5
+    n = len(samples)
+    if n > 2 and stdev > 0:
+        m3 = float(np.mean((samples - mean) ** 3))
+        m2 = float(np.mean((samples - mean) ** 2))
+        skewness = m3 / (m2 ** 1.5)
+    else:
+        skewness = 0.0
+
+    cv = stdev / mean if mean != 0 else 0.0
+
+    return DistributionStats(
+        mean=mean,
+        stdev=stdev,
+        skewness=skewness,
+        coefficient_of_variation=cv,
+        p25=p25,
+        p75=p75,
+        band_width=pe.p90 - pe.p10,
+    )

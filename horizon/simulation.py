@@ -2,11 +2,18 @@ from datetime import datetime, timezone
 
 import numpy as np
 
-from horizon.calendar_estimator import estimate_calendar_days
-from horizon.mc_utils import compute_ratios, compute_weights, bootstrap_sample, extract_percentiles
+from horizon.calendar_estimator import estimate_calendar_days, _compute_calendar_ratios
+from horizon.mc_utils import (
+    compute_distribution_stats,
+    compute_ratios,
+    compute_weights,
+    bootstrap_sample,
+    extract_percentiles,
+)
 from horizon.models import (
     EstimationRequest,
     EstimationResult,
+    InfluentialTask,
     Task,
 )
 from horizon.reference_finder import find_reference_cases
@@ -52,6 +59,23 @@ def run_estimation(
     # Reference cases
     reference_cases = find_reference_cases(request, historical_tasks, top_references, sigma)
 
+    # Extended statistics
+    effort_stats = compute_distribution_stats(effort_samples, effort_estimate)
+    calendar_stats = compute_distribution_stats(
+        np.array(calendar_samples), calendar_estimate,
+    )
+    prob_exceed = float(np.mean(effort_samples > request.initial_estimate_days))
+
+    cal_ratios = _compute_calendar_ratios(historical_tasks)
+
+    # Influential tasks (top 10 by weight)
+    sorted_pairs = sorted(
+        zip(historical_tasks, weights.tolist()), key=lambda p: p[1], reverse=True,
+    )
+    influential = [
+        InfluentialTask(task=t, weight=w) for t, w in sorted_pairs[:10]
+    ]
+
     return EstimationResult(
         request=request,
         team_name=team_name,
@@ -62,4 +86,11 @@ def run_estimation(
         reference_cases=reference_cases,
         dataset_size=len(historical_tasks),
         timestamp=datetime.now(timezone.utc).isoformat(),
+        effort_stats=effort_stats,
+        calendar_stats=calendar_stats,
+        prob_exceed_estimate=prob_exceed,
+        historical_accuracy_mean=float(ratios.mean()),
+        historical_accuracy_stdev=float(ratios.std(ddof=1)) if len(ratios) > 1 else 0.0,
+        calendar_overhead_mean=float(cal_ratios.mean()),
+        influential_tasks=influential,
     )

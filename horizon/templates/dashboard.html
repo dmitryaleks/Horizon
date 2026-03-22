@@ -103,6 +103,68 @@
     </table>
 </div>
 
+<!-- Section: Estimation Insights -->
+<div class="section" id="section-insights">
+    <h2>Estimation Insights</h2>
+    <table>
+        <thead>
+            <tr><th>Metric</th><th>Effort (man-days)</th><th>Calendar (days)</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>P25 / P75 Range</td>
+                <td>{{ "%.1f"|format(result.effort_stats.p25) }} — {{ "%.1f"|format(result.effort_stats.p75) }}</td>
+                <td>{{ "%.1f"|format(result.calendar_stats.p25) }} — {{ "%.1f"|format(result.calendar_stats.p75) }}</td>
+            </tr>
+            <tr>
+                <td>Mean</td>
+                <td>{{ "%.1f"|format(result.effort_stats.mean) }}</td>
+                <td>{{ "%.1f"|format(result.calendar_stats.mean) }}</td>
+            </tr>
+            <tr>
+                <td>Standard Deviation</td>
+                <td>{{ "%.2f"|format(result.effort_stats.stdev) }}</td>
+                <td>{{ "%.2f"|format(result.calendar_stats.stdev) }}</td>
+            </tr>
+            <tr>
+                <td>Skewness</td>
+                <td>{{ "%.2f"|format(result.effort_stats.skewness) }}</td>
+                <td>{{ "%.2f"|format(result.calendar_stats.skewness) }}</td>
+            </tr>
+            <tr>
+                <td>Coefficient of Variation</td>
+                <td>{{ "%.0f"|format(result.effort_stats.coefficient_of_variation * 100) }}%</td>
+                <td>{{ "%.0f"|format(result.calendar_stats.coefficient_of_variation * 100) }}%</td>
+            </tr>
+            <tr>
+                <td>Confidence Band Width (P90 − P10)</td>
+                <td>{{ "%.1f"|format(result.effort_stats.band_width) }} days</td>
+                <td>{{ "%.1f"|format(result.calendar_stats.band_width) }} days</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr><th>Historical Pattern</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Probability of exceeding initial estimate ({{ "%.1f"|format(result.request.initial_estimate_days) }}d)</td>
+                <td class="highlight">{{ "%.0f"|format(result.prob_exceed_estimate * 100) }}%</td>
+            </tr>
+            <tr>
+                <td>Historical estimation accuracy (actual / estimated)</td>
+                <td>{{ "%.2f"|format(result.historical_accuracy_mean) }}× avg (stdev {{ "%.2f"|format(result.historical_accuracy_stdev) }})</td>
+            </tr>
+            <tr>
+                <td>Calendar overhead (calendar / effort)</td>
+                <td>{{ "%.2f"|format(result.calendar_overhead_mean) }}× avg</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="chart-container" id="risk-chart"></div>
+</div>
+
 <!-- Section 3: Calendar Delivery -->
 <div class="section" id="section-calendar">
     <h2>Calendar Delivery Estimate</h2>
@@ -124,7 +186,34 @@
     <div class="chart-container" id="calendar-cdf-chart"></div>
 </div>
 
-<!-- Section 4: Reference Cases -->
+<!-- Section: Influence Analysis -->
+<div class="section" id="section-influence">
+    <h2>Influence Analysis</h2>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
+        Historical tasks with the highest Gaussian weight — these shaped the estimate most.
+    </p>
+    {% if result.influential_tasks %}
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Story Pts</th><th>Actual/Est Ratio</th><th>Weight</th></tr>
+        </thead>
+        <tbody>
+            {% for it in result.influential_tasks %}
+            <tr>
+                <td>{{ it.task.id }}</td>
+                <td>{{ it.task.name }}</td>
+                <td>{{ it.task.story_points }}</td>
+                <td>{{ "%.2f"|format(it.task.actual_days / it.task.estimated_days) }}×</td>
+                <td>{{ "%.1f"|format(it.weight * 100) }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="chart-container" id="influence-chart"></div>
+    {% endif %}
+</div>
+
+<!-- Section: Reference Cases -->
 <div class="section" id="section-references">
     <h2>Reference Cases</h2>
     {% if result.reference_cases %}
@@ -154,6 +243,7 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="chart-container" id="ref-scatter-chart"></div>
     {% else %}
     <p>No reference cases available.</p>
     {% endif %}
@@ -176,12 +266,14 @@
         shapes: [
             { type: 'line', x0: {{ result.effort_days.p10 }}, x1: {{ result.effort_days.p10 }}, y0: 0, y1: 1, yref: 'paper', line: { color: '#28a745', width: 2, dash: 'dash' } },
             { type: 'line', x0: {{ result.effort_days.p50 }}, x1: {{ result.effort_days.p50 }}, y0: 0, y1: 1, yref: 'paper', line: { color: '#fd7e14', width: 3 } },
-            { type: 'line', x0: {{ result.effort_days.p90 }}, x1: {{ result.effort_days.p90 }}, y0: 0, y1: 1, yref: 'paper', line: { color: '#dc3545', width: 2, dash: 'dash' } }
+            { type: 'line', x0: {{ result.effort_days.p90 }}, x1: {{ result.effort_days.p90 }}, y0: 0, y1: 1, yref: 'paper', line: { color: '#dc3545', width: 2, dash: 'dash' } },
+            { type: 'line', x0: {{ result.request.initial_estimate_days }}, x1: {{ result.request.initial_estimate_days }}, y0: 0, y1: 1, yref: 'paper', line: { color: '#6c757d', width: 2, dash: 'dashdot' } }
         ],
         annotations: [
             { x: {{ result.effort_days.p10 }}, y: 1.06, yref: 'paper', text: 'P10', showarrow: false, font: { color: '#28a745', size: 12 } },
             { x: {{ result.effort_days.p50 }}, y: 1.06, yref: 'paper', text: 'P50', showarrow: false, font: { color: '#fd7e14', size: 12, weight: 'bold' } },
-            { x: {{ result.effort_days.p90 }}, y: 1.06, yref: 'paper', text: 'P90', showarrow: false, font: { color: '#dc3545', size: 12 } }
+            { x: {{ result.effort_days.p90 }}, y: 1.06, yref: 'paper', text: 'P90', showarrow: false, font: { color: '#dc3545', size: 12 } },
+            { x: {{ result.request.initial_estimate_days }}, y: 1.12, yref: 'paper', text: 'Estimate', showarrow: false, font: { color: '#6c757d', size: 11 } }
         ],
         margin: { t: 50 },
         bargap: 0.02
@@ -321,6 +413,127 @@
         'calendar days',
         'rgba(111, 66, 193, 1)'
     );
+
+    // --- Risk Breakdown Chart ---
+    (function() {
+        var samples = effortData;
+        var p10 = {{ result.effort_days.p10 }};
+        var p25 = {{ result.effort_stats.p25 }};
+        var p50 = {{ result.effort_days.p50 }};
+        var p75 = {{ result.effort_stats.p75 }};
+        var p90 = {{ result.effort_days.p90 }};
+        var n = samples.length;
+
+        var buckets = [
+            { label: '< P10 (under ' + p10.toFixed(1) + 'd)', count: 0, color: '#28a745' },
+            { label: 'P10–P25 (' + p10.toFixed(1) + '–' + p25.toFixed(1) + 'd)', count: 0, color: '#5cb85c' },
+            { label: 'P25–P50 (' + p25.toFixed(1) + '–' + p50.toFixed(1) + 'd)', count: 0, color: '#8bc34a' },
+            { label: 'P50–P75 (' + p50.toFixed(1) + '–' + p75.toFixed(1) + 'd)', count: 0, color: '#ff9800' },
+            { label: 'P75–P90 (' + p75.toFixed(1) + '–' + p90.toFixed(1) + 'd)', count: 0, color: '#f44336' },
+            { label: '> P90 (over ' + p90.toFixed(1) + 'd)', count: 0, color: '#b71c1c' }
+        ];
+
+        for (var i = 0; i < n; i++) {
+            var v = samples[i];
+            if (v < p10) buckets[0].count++;
+            else if (v < p25) buckets[1].count++;
+            else if (v < p50) buckets[2].count++;
+            else if (v < p75) buckets[3].count++;
+            else if (v < p90) buckets[4].count++;
+            else buckets[5].count++;
+        }
+
+        var labels = buckets.map(function(b) { return b.label; }).reverse();
+        var pcts = buckets.map(function(b) { return Math.round(b.count / n * 100); }).reverse();
+        var colors = buckets.map(function(b) { return b.color; }).reverse();
+
+        Plotly.newPlot('risk-chart', [{
+            y: labels, x: pcts,
+            type: 'bar', orientation: 'h',
+            marker: { color: colors },
+            text: pcts.map(function(p) { return p + '%'; }),
+            textposition: 'auto',
+            hovertemplate: '%{y}<br>%{x}% of simulations<extra></extra>'
+        }], {
+            title: 'Risk Breakdown — Effort Distribution Buckets',
+            xaxis: { title: 'Percentage of Simulations', range: [0, 100] },
+            margin: { l: 220, t: 50 },
+            height: 300
+        }, { responsive: true });
+    })();
+
+    // --- Influence Analysis Chart ---
+    (function() {
+        var data = {{ influential_json }};
+        if (data.length === 0) return;
+
+        var labels = data.map(function(d) { return d.id + ': ' + d.name; }).reverse();
+        var weights = data.map(function(d) { return d.weight; }).reverse();
+
+        Plotly.newPlot('influence-chart', [{
+            y: labels, x: weights,
+            type: 'bar', orientation: 'h',
+            marker: { color: 'rgba(13, 110, 253, 0.7)' },
+            text: weights.map(function(w) { return w.toFixed(1) + '%'; }),
+            textposition: 'auto',
+            hovertemplate: '%{y}<br>Weight: %{x:.1f}%<extra></extra>'
+        }], {
+            title: 'Most Influential Historical Tasks (by Gaussian Weight)',
+            xaxis: { title: 'Weight (%)' },
+            margin: { l: 280, t: 50 },
+            height: Math.max(250, data.length * 35 + 80)
+        }, { responsive: true });
+    })();
+
+    // --- Reference Case Scatter Plot ---
+    (function() {
+        var refs = {{ ref_scatter_json }};
+        if (refs.length === 0) return;
+
+        var est = refs.map(function(r) { return r.estimated; });
+        var act = refs.map(function(r) { return r.actual; });
+        var sim = refs.map(function(r) { return r.similarity; });
+        var texts = refs.map(function(r) {
+            return r.id + ': ' + r.name + '<br>SP=' + r.story_points +
+                   '<br>Ratio: ' + (r.actual / r.estimated).toFixed(2) + '×' +
+                   '<br>Similarity: ' + r.similarity + '%';
+        });
+        var sizes = sim.map(function(s) { return 8 + s * 0.2; });
+
+        // Perfect estimate line
+        var maxVal = Math.max(Math.max.apply(null, est), Math.max.apply(null, act)) * 1.1;
+
+        Plotly.newPlot('ref-scatter-chart', [
+            {
+                x: [0, maxVal], y: [0, maxVal],
+                mode: 'lines',
+                line: { color: '#dee2e6', width: 1.5, dash: 'dash' },
+                name: 'Perfect Estimate',
+                hoverinfo: 'skip'
+            },
+            {
+                x: est, y: act,
+                mode: 'markers',
+                marker: {
+                    size: sizes,
+                    color: sim,
+                    colorscale: 'Blues',
+                    cmin: 0, cmax: 100,
+                    colorbar: { title: 'Similarity %', thickness: 15 },
+                    line: { width: 1, color: '#333' }
+                },
+                text: texts,
+                hovertemplate: '%{text}<extra></extra>',
+                name: 'Reference Tasks'
+            }
+        ], {
+            title: 'Reference Cases — Estimated vs. Actual',
+            xaxis: { title: 'Estimated (man-days)', rangemode: 'tozero' },
+            yaxis: { title: 'Actual (man-days)', rangemode: 'tozero' },
+            margin: { t: 50 },
+            height: 400
+        }, { responsive: true });
+    })();
 </script>
 
 <p class="meta">Generated by Horizon v{{ version }} on {{ result.timestamp }}</p>

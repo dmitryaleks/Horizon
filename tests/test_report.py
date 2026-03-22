@@ -2,8 +2,10 @@ import pytest
 from pathlib import Path
 
 from horizon.models import (
+    DistributionStats,
     EstimationRequest,
     EstimationResult,
+    InfluentialTask,
     PercentileEstimate,
     ReferenceCase,
     Task,
@@ -37,6 +39,13 @@ def make_result() -> EstimationResult:
         ],
         dataset_size=15,
         timestamp="2025-03-22T10:00:00+00:00",
+        effort_stats=DistributionStats(mean=4.0, stdev=1.1, skewness=0.3, coefficient_of_variation=0.28, p25=3.2, p75=4.8, band_width=4.6),
+        calendar_stats=DistributionStats(mean=6.0, stdev=2.0, skewness=0.4, coefficient_of_variation=0.33, p25=4.8, p75=7.2, band_width=7.5),
+        prob_exceed_estimate=0.72,
+        historical_accuracy_mean=1.28,
+        historical_accuracy_stdev=0.35,
+        calendar_overhead_mean=1.52,
+        influential_tasks=[InfluentialTask(task=task, weight=0.3)],
     )
 
 
@@ -111,6 +120,33 @@ class TestGenerateReport:
         result = result.model_copy(update={"reference_cases": []})
         html = generate_report(result)
         assert "No reference cases available" in html
+
+    def test_section_estimation_insights(self):
+        html = generate_report(make_result())
+        assert "Estimation Insights" in html
+        assert "72%" in html  # prob exceed
+        assert "1.28" in html  # historical accuracy mean
+        assert "1.52" in html  # calendar overhead
+
+    def test_section_influence_analysis(self):
+        html = generate_report(make_result())
+        assert "Influence Analysis" in html
+        assert "influence-chart" in html
+
+    def test_risk_breakdown_chart(self):
+        html = generate_report(make_result())
+        assert "risk-chart" in html
+        assert "Risk Breakdown" in html
+
+    def test_reference_scatter_chart(self):
+        html = generate_report(make_result())
+        assert "ref-scatter-chart" in html
+        assert "Perfect Estimate" in html
+
+    def test_estimate_overlay_on_effort_histogram(self):
+        html = generate_report(make_result())
+        assert "Estimate" in html
+        assert "dashdot" in html
 
 
 class TestSaveReport:

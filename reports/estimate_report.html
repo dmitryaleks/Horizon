@@ -103,6 +103,68 @@
     </table>
 </div>
 
+<!-- Section: Estimation Insights -->
+<div class="section" id="section-insights">
+    <h2>Estimation Insights</h2>
+    <table>
+        <thead>
+            <tr><th>Metric</th><th>Effort (man-days)</th><th>Calendar (days)</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>P25 / P75 Range</td>
+                <td>15.7 — 21.4</td>
+                <td>23.5 — 35.4</td>
+            </tr>
+            <tr>
+                <td>Mean</td>
+                <td>18.9</td>
+                <td>29.8</td>
+            </tr>
+            <tr>
+                <td>Standard Deviation</td>
+                <td>4.84</td>
+                <td>9.17</td>
+            </tr>
+            <tr>
+                <td>Skewness</td>
+                <td>0.43</td>
+                <td>0.69</td>
+            </tr>
+            <tr>
+                <td>Coefficient of Variation</td>
+                <td>26%</td>
+                <td>31%</td>
+            </tr>
+            <tr>
+                <td>Confidence Band Width (P90 − P10)</td>
+                <td>11.9 days</td>
+                <td>23.0 days</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <thead>
+            <tr><th>Historical Pattern</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Probability of exceeding initial estimate (15.0d)</td>
+                <td class="highlight">77%</td>
+            </tr>
+            <tr>
+                <td>Historical estimation accuracy (actual / estimated)</td>
+                <td>1.23× avg (stdev 0.37)</td>
+            </tr>
+            <tr>
+                <td>Calendar overhead (calendar / effort)</td>
+                <td>1.60× avg</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="chart-container" id="risk-chart"></div>
+</div>
+
 <!-- Section 3: Calendar Delivery -->
 <div class="section" id="section-calendar">
     <h2>Calendar Delivery Estimate</h2>
@@ -124,7 +186,106 @@
     <div class="chart-container" id="calendar-cdf-chart"></div>
 </div>
 
-<!-- Section 4: Reference Cases -->
+<!-- Section: Influence Analysis -->
+<div class="section" id="section-influence">
+    <h2>Influence Analysis</h2>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 1rem;">
+        Historical tasks with the highest Gaussian weight — these shaped the estimate most.
+    </p>
+    
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Story Pts</th><th>Actual/Est Ratio</th><th>Weight</th></tr>
+        </thead>
+        <tbody>
+            
+            <tr>
+                <td>TASK-002</td>
+                <td>Task 2</td>
+                <td>8</td>
+                <td>1.25×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-006</td>
+                <td>Task 6</td>
+                <td>8</td>
+                <td>1.05×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-012</td>
+                <td>Task 12</td>
+                <td>8</td>
+                <td>1.23×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-014</td>
+                <td>Task 14</td>
+                <td>8</td>
+                <td>0.92×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-016</td>
+                <td>Task 16</td>
+                <td>8</td>
+                <td>1.05×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-028</td>
+                <td>Task 28</td>
+                <td>8</td>
+                <td>1.28×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-048</td>
+                <td>Task 48</td>
+                <td>8</td>
+                <td>1.09×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-049</td>
+                <td>Task 49</td>
+                <td>8</td>
+                <td>1.38×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-061</td>
+                <td>Task 61</td>
+                <td>8</td>
+                <td>1.62×</td>
+                <td>1.4%</td>
+            </tr>
+            
+            <tr>
+                <td>TASK-067</td>
+                <td>Task 67</td>
+                <td>8</td>
+                <td>1.25×</td>
+                <td>1.4%</td>
+            </tr>
+            
+        </tbody>
+    </table>
+    <div class="chart-container" id="influence-chart"></div>
+    
+</div>
+
+<!-- Section: Reference Cases -->
 <div class="section" id="section-references">
     <h2>Reference Cases</h2>
     
@@ -194,6 +355,7 @@
             
         </tbody>
     </table>
+    <div class="chart-container" id="ref-scatter-chart"></div>
     
 </div>
 
@@ -214,12 +376,14 @@
         shapes: [
             { type: 'line', x0: 12.857142857142856, x1: 12.857142857142856, y0: 0, y1: 1, yref: 'paper', line: { color: '#28a745', width: 2, dash: 'dash' } },
             { type: 'line', x0: 18.686440677966097, x1: 18.686440677966097, y0: 0, y1: 1, yref: 'paper', line: { color: '#fd7e14', width: 3 } },
-            { type: 'line', x0: 24.72222222222222, x1: 24.72222222222222, y0: 0, y1: 1, yref: 'paper', line: { color: '#dc3545', width: 2, dash: 'dash' } }
+            { type: 'line', x0: 24.72222222222222, x1: 24.72222222222222, y0: 0, y1: 1, yref: 'paper', line: { color: '#dc3545', width: 2, dash: 'dash' } },
+            { type: 'line', x0: 15.0, x1: 15.0, y0: 0, y1: 1, yref: 'paper', line: { color: '#6c757d', width: 2, dash: 'dashdot' } }
         ],
         annotations: [
             { x: 12.857142857142856, y: 1.06, yref: 'paper', text: 'P10', showarrow: false, font: { color: '#28a745', size: 12 } },
             { x: 18.686440677966097, y: 1.06, yref: 'paper', text: 'P50', showarrow: false, font: { color: '#fd7e14', size: 12, weight: 'bold' } },
-            { x: 24.72222222222222, y: 1.06, yref: 'paper', text: 'P90', showarrow: false, font: { color: '#dc3545', size: 12 } }
+            { x: 24.72222222222222, y: 1.06, yref: 'paper', text: 'P90', showarrow: false, font: { color: '#dc3545', size: 12 } },
+            { x: 15.0, y: 1.12, yref: 'paper', text: 'Estimate', showarrow: false, font: { color: '#6c757d', size: 11 } }
         ],
         margin: { t: 50 },
         bargap: 0.02
@@ -359,9 +523,130 @@
         'calendar days',
         'rgba(111, 66, 193, 1)'
     );
+
+    // --- Risk Breakdown Chart ---
+    (function() {
+        var samples = effortData;
+        var p10 = 12.857142857142856;
+        var p25 = 15.714285714285715;
+        var p50 = 18.686440677966097;
+        var p75 = 21.358695652173914;
+        var p90 = 24.72222222222222;
+        var n = samples.length;
+
+        var buckets = [
+            { label: '< P10 (under ' + p10.toFixed(1) + 'd)', count: 0, color: '#28a745' },
+            { label: 'P10–P25 (' + p10.toFixed(1) + '–' + p25.toFixed(1) + 'd)', count: 0, color: '#5cb85c' },
+            { label: 'P25–P50 (' + p25.toFixed(1) + '–' + p50.toFixed(1) + 'd)', count: 0, color: '#8bc34a' },
+            { label: 'P50–P75 (' + p50.toFixed(1) + '–' + p75.toFixed(1) + 'd)', count: 0, color: '#ff9800' },
+            { label: 'P75–P90 (' + p75.toFixed(1) + '–' + p90.toFixed(1) + 'd)', count: 0, color: '#f44336' },
+            { label: '> P90 (over ' + p90.toFixed(1) + 'd)', count: 0, color: '#b71c1c' }
+        ];
+
+        for (var i = 0; i < n; i++) {
+            var v = samples[i];
+            if (v < p10) buckets[0].count++;
+            else if (v < p25) buckets[1].count++;
+            else if (v < p50) buckets[2].count++;
+            else if (v < p75) buckets[3].count++;
+            else if (v < p90) buckets[4].count++;
+            else buckets[5].count++;
+        }
+
+        var labels = buckets.map(function(b) { return b.label; }).reverse();
+        var pcts = buckets.map(function(b) { return Math.round(b.count / n * 100); }).reverse();
+        var colors = buckets.map(function(b) { return b.color; }).reverse();
+
+        Plotly.newPlot('risk-chart', [{
+            y: labels, x: pcts,
+            type: 'bar', orientation: 'h',
+            marker: { color: colors },
+            text: pcts.map(function(p) { return p + '%'; }),
+            textposition: 'auto',
+            hovertemplate: '%{y}<br>%{x}% of simulations<extra></extra>'
+        }], {
+            title: 'Risk Breakdown — Effort Distribution Buckets',
+            xaxis: { title: 'Percentage of Simulations', range: [0, 100] },
+            margin: { l: 220, t: 50 },
+            height: 300
+        }, { responsive: true });
+    })();
+
+    // --- Influence Analysis Chart ---
+    (function() {
+        var data = [{"id": "TASK-002", "name": "Task 2", "story_points": 8, "ratio": 1.25, "weight": 1.4}, {"id": "TASK-006", "name": "Task 6", "story_points": 8, "ratio": 1.05, "weight": 1.4}, {"id": "TASK-012", "name": "Task 12", "story_points": 8, "ratio": 1.23, "weight": 1.4}, {"id": "TASK-014", "name": "Task 14", "story_points": 8, "ratio": 0.92, "weight": 1.4}, {"id": "TASK-016", "name": "Task 16", "story_points": 8, "ratio": 1.05, "weight": 1.4}, {"id": "TASK-028", "name": "Task 28", "story_points": 8, "ratio": 1.28, "weight": 1.4}, {"id": "TASK-048", "name": "Task 48", "story_points": 8, "ratio": 1.09, "weight": 1.4}, {"id": "TASK-049", "name": "Task 49", "story_points": 8, "ratio": 1.38, "weight": 1.4}, {"id": "TASK-061", "name": "Task 61", "story_points": 8, "ratio": 1.62, "weight": 1.4}, {"id": "TASK-067", "name": "Task 67", "story_points": 8, "ratio": 1.25, "weight": 1.4}];
+        if (data.length === 0) return;
+
+        var labels = data.map(function(d) { return d.id + ': ' + d.name; }).reverse();
+        var weights = data.map(function(d) { return d.weight; }).reverse();
+
+        Plotly.newPlot('influence-chart', [{
+            y: labels, x: weights,
+            type: 'bar', orientation: 'h',
+            marker: { color: 'rgba(13, 110, 253, 0.7)' },
+            text: weights.map(function(w) { return w.toFixed(1) + '%'; }),
+            textposition: 'auto',
+            hovertemplate: '%{y}<br>Weight: %{x:.1f}%<extra></extra>'
+        }], {
+            title: 'Most Influential Historical Tasks (by Gaussian Weight)',
+            xaxis: { title: 'Weight (%)' },
+            margin: { l: 280, t: 50 },
+            height: Math.max(250, data.length * 35 + 80)
+        }, { responsive: true });
+    })();
+
+    // --- Reference Case Scatter Plot ---
+    (function() {
+        var refs = [{"id": "TASK-002", "name": "Task 2", "story_points": 8, "estimated": 11.8, "actual": 14.7, "similarity": 100}, {"id": "TASK-006", "name": "Task 6", "story_points": 8, "estimated": 11.1, "actual": 11.7, "similarity": 100}, {"id": "TASK-012", "name": "Task 12", "story_points": 8, "estimated": 5.6, "actual": 6.9, "similarity": 100}, {"id": "TASK-014", "name": "Task 14", "story_points": 8, "estimated": 4.9, "actual": 4.5, "similarity": 100}, {"id": "TASK-016", "name": "Task 16", "story_points": 8, "estimated": 4.2, "actual": 4.4, "similarity": 100}];
+        if (refs.length === 0) return;
+
+        var est = refs.map(function(r) { return r.estimated; });
+        var act = refs.map(function(r) { return r.actual; });
+        var sim = refs.map(function(r) { return r.similarity; });
+        var texts = refs.map(function(r) {
+            return r.id + ': ' + r.name + '<br>SP=' + r.story_points +
+                   '<br>Ratio: ' + (r.actual / r.estimated).toFixed(2) + '×' +
+                   '<br>Similarity: ' + r.similarity + '%';
+        });
+        var sizes = sim.map(function(s) { return 8 + s * 0.2; });
+
+        // Perfect estimate line
+        var maxVal = Math.max(Math.max.apply(null, est), Math.max.apply(null, act)) * 1.1;
+
+        Plotly.newPlot('ref-scatter-chart', [
+            {
+                x: [0, maxVal], y: [0, maxVal],
+                mode: 'lines',
+                line: { color: '#dee2e6', width: 1.5, dash: 'dash' },
+                name: 'Perfect Estimate',
+                hoverinfo: 'skip'
+            },
+            {
+                x: est, y: act,
+                mode: 'markers',
+                marker: {
+                    size: sizes,
+                    color: sim,
+                    colorscale: 'Blues',
+                    cmin: 0, cmax: 100,
+                    colorbar: { title: 'Similarity %', thickness: 15 },
+                    line: { width: 1, color: '#333' }
+                },
+                text: texts,
+                hovertemplate: '%{text}<extra></extra>',
+                name: 'Reference Tasks'
+            }
+        ], {
+            title: 'Reference Cases — Estimated vs. Actual',
+            xaxis: { title: 'Estimated (man-days)', rangemode: 'tozero' },
+            yaxis: { title: 'Actual (man-days)', rangemode: 'tozero' },
+            margin: { t: 50 },
+            height: 400
+        }, { responsive: true });
+    })();
 </script>
 
-<p class="meta">Generated by Horizon v0.1.0 on 2026-03-22T12:14:18.551820+00:00</p>
+<p class="meta">Generated by Horizon v0.1.0 on 2026-03-22T14:14:18.948165+00:00</p>
 
 </body>
 </html>

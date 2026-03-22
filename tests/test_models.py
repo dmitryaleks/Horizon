@@ -9,6 +9,8 @@ from horizon.models import (
     EstimationRequest,
     PercentileEstimate,
     ReferenceCase,
+    DistributionStats,
+    InfluentialTask,
     EstimationResult,
 )
 
@@ -136,6 +138,12 @@ def test_reference_case_valid():
 
 # --- EstimationResult ---
 
+def _make_dist_stats(**overrides) -> DistributionStats:
+    base = dict(mean=4.0, stdev=1.2, skewness=0.5, coefficient_of_variation=0.3, p25=3.0, p75=5.0, band_width=5.0)
+    base.update(overrides)
+    return DistributionStats(**base)
+
+
 def make_estimation_result() -> EstimationResult:
     task = Task(**make_task())
     return EstimationResult(
@@ -148,6 +156,13 @@ def make_estimation_result() -> EstimationResult:
         reference_cases=[ReferenceCase(task=task, similarity_score=1.0)],
         dataset_size=15,
         timestamp="2025-01-20T10:00:00",
+        effort_stats=_make_dist_stats(),
+        calendar_stats=_make_dist_stats(mean=6.0, stdev=2.0, p25=4.5, p75=7.5, band_width=8.0),
+        prob_exceed_estimate=0.72,
+        historical_accuracy_mean=1.28,
+        historical_accuracy_stdev=0.35,
+        calendar_overhead_mean=1.52,
+        influential_tasks=[InfluentialTask(task=task, weight=0.3)],
     )
 
 
@@ -164,3 +179,30 @@ def test_estimation_result_json_round_trip():
     assert result2.team_name == result.team_name
     assert result2.effort_days.p50 == result.effort_days.p50
     assert result2.reference_cases[0].task.id == "PROJ-1"
+
+
+# --- DistributionStats ---
+
+def test_distribution_stats_valid():
+    ds = _make_dist_stats()
+    assert ds.mean == 4.0
+    assert ds.band_width == 5.0
+
+
+# --- InfluentialTask ---
+
+def test_influential_task_valid():
+    task = Task(**make_task())
+    it = InfluentialTask(task=task, weight=0.25)
+    assert it.weight == 0.25
+
+
+# --- EstimationResult new fields ---
+
+def test_estimation_result_new_fields():
+    result = make_estimation_result()
+    assert 0.0 <= result.prob_exceed_estimate <= 1.0
+    assert result.historical_accuracy_mean > 0
+    assert result.calendar_overhead_mean > 0
+    assert result.effort_stats.p25 <= result.effort_stats.p75
+    assert len(result.influential_tasks) >= 1
