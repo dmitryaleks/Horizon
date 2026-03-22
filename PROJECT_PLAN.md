@@ -96,7 +96,7 @@ python main.py validate --data data/team.json
 ---
 
 ### Task 2: Data Models (`horizon/models.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 1
 **Description:** Define Pydantic models: `Task` (id, name, story_points, estimated_days, actual_days, calendar_days, completed_date), `TeamData` (team name + task list), `EstimationRequest` (task_name, story_points, initial_estimate_days), `PercentileEstimate` (p10, p50, p90), `ReferenceCase` (task + similarity_score), `EstimationResult` (all results combined). Write unit tests for validation and JSON serialization round-trips.
 **Acceptance:** All model tests pass.
