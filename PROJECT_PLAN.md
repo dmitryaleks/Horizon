@@ -112,7 +112,7 @@ python main.py validate --data data/team.json
 ---
 
 ### Task 4: Monte Carlo Simulation Engine (`horizon/simulation.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
 **Description:** Implement the core `run_estimation()` function and private helpers:
 - `_compute_ratios()`: actual_days / estimated_days for each historical task
