@@ -230,6 +230,8 @@ PROJ-202,Add password reset,3,16,20,2024-01-10,2024-01-15
 
 ## HTML Report
 
+[View a live example report](https://dmitryaleks.github.io/Horizon/reports/estimate_report.html)
+
 The `estimate` command generates a self-contained HTML dashboard with four sections:
 
 1. **Refined Effort Estimate** — P10/P50/P90 effort-days table with an interactive histogram and CDF chart showing the probability distribution of effort outcomes.
