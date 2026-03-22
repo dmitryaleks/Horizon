@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# IDE
+.idea/
+
+# Claude Code
+.claude/
+
+# Data (keep example files)
+data/*
+!data/example_team.json
+
+# Reports
+*.html
+!horizon/templates/*.html
+
+# OS
+Thumbs.db
+Desktop.ini
