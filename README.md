@@ -34,16 +34,10 @@ Horizon replaces gut-feel task estimates with data-driven probabilistic forecast
 pip install -r requirements.txt
 
 # Generate sample data
-python gluecode/sample_data_gen.py --count 75 --team "Demo Team" --output data/demo_team.json --seed 42
+python gluecode/sample_data_gen.py --count 256 --team "Demo Team" --output data/demo_team.json --seed 42
 
 # Run an estimation
-python main.py estimate \
-  --data data/demo_team.json \
-  --name "Build search feature" \
-  --story-points 5 \
-  --estimate 3.0 \
-  --output reports/estimate_report.html \
-  --seed 42
+python main.py estimate --data data/demo_team.json --name "Build search feature" --story-points 8 --estimate 15.0 --output reports/estimate_report.html --seed 42
 
 # Open the report
 start reports/estimate_report.html
