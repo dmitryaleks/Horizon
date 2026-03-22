@@ -89,7 +89,7 @@ python main.py validate --data data/team.json
 ## Tasks
 
 ### Task 1: Project Scaffolding and Dependencies
-**Status:** TODO
+**Status:** DONE
 **Description:** Create the `horizon/` package, `tests/`, `data/` directories. Write `requirements.txt` (numpy, pydantic, plotly, jinja2, pandas) and `requirements-dev.txt` (pytest, pytest-cov). Replace scaffold `main.py` with CLI entry point stub. Install all deps.
 **Acceptance:** `python main.py` runs without error and prints a stub message.
 
