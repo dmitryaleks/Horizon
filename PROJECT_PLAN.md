@@ -104,7 +104,7 @@ python main.py validate --data data/team.json
 ---
 
 ### Task 3: Data Store (`horizon/data_store.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
 **Description:** Implement `load_team_data(path)`, `save_team_data(data, path)`, `merge_team_data(existing, new_tasks)`. Create `tests/fixtures/sample_team.json` with 10-15 realistic tasks. Test loading, saving, round-tripping, merge deduplication, and error cases (missing file, invalid schema).
 **Acceptance:** All data_store tests pass.
