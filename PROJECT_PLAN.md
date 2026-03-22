@@ -126,7 +126,7 @@ Accept `seed` parameter for deterministic tests. Test: deterministic output, P10
 ---
 
 ### Task 5: Calendar Day Estimator (`horizon/calendar_estimator.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
 **Description:** Same weighted bootstrap approach as simulation.py but using `calendar_days / actual_days` ratios. Function `estimate_calendar_days()` returns `(PercentileEstimate, raw_samples)`. Test with deterministic seed, verify sanity constraints.
 **Acceptance:** All calendar_estimator tests pass.
@@ -134,7 +134,7 @@ Accept `seed` parameter for deterministic tests. Test: deterministic output, P10
 ---
 
 ### Task 6: Reference Case Finder (`horizon/reference_finder.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
 **Description:** Implement `find_reference_cases()` — rank historical tasks by Gaussian similarity score on story points, normalize to [0,1], return top N. Test: exact match gets score 1.0, results sorted descending, handles edge cases.
 **Acceptance:** All reference_finder tests pass.
@@ -142,7 +142,7 @@ Accept `seed` parameter for deterministic tests. Test: deterministic output, P10
 ---
 
 ### Task 7: Integration — Wire Simulation Pipeline
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Tasks 4, 5, 6
 **Description:** Update `simulation.run_estimation()` to call `calendar_estimator.estimate_calendar_days()` and `reference_finder.find_reference_cases()` internally, returning a fully populated `EstimationResult`. Add integration test loading fixture data and asserting all result fields are populated.
 **Acceptance:** Integration test produces a complete `EstimationResult` with all fields sane.
@@ -150,7 +150,7 @@ Accept `seed` parameter for deterministic tests. Test: deterministic output, P10
 ---
 
 ### Task 8: HTML Report Generator (`horizon/report.py` + template)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
 **Description:** Create Jinja2 template `horizon/templates/dashboard.html` and `report.py` with `generate_report(result)` and `save_report(html, path)`. Four dashboard sections:
 1. **Refined Estimate:** Table (P10/P50/P90 effort-days) + Plotly histogram with vertical percentile lines
