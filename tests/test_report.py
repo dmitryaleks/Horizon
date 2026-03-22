@@ -77,7 +77,15 @@ class TestGenerateReport:
         html = generate_report(make_result())
         assert "effort-chart" in html
         assert "calendar-chart" in html
+        assert "effort-cdf-chart" in html
+        assert "calendar-cdf-chart" in html
         assert "Plotly.newPlot" in html
+
+    def test_cdf_charts_have_hover_template(self):
+        html = generate_report(make_result())
+        assert "Cumulative Probability" in html
+        assert "chance of finishing within" in html
+        assert "buildCdfChart" in html
 
     def test_plotly_cdn_included(self):
         html = generate_report(make_result())

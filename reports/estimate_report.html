@@ -81,6 +81,7 @@
         </tbody>
     </table>
     <div class="chart-container" id="effort-chart"></div>
+    <div class="chart-container" id="effort-cdf-chart"></div>
 </div>
 
 <!-- Section 2: Three-Point Estimation -->
@@ -120,6 +121,7 @@
         </tbody>
     </table>
     <div class="chart-container" id="calendar-chart"></div>
+    <div class="chart-container" id="calendar-cdf-chart"></div>
 </div>
 
 <!-- Section 4: Reference Cases -->
@@ -251,9 +253,115 @@
         bargap: 0.02
     };
     Plotly.newPlot('calendar-chart', [calendarTrace], calendarLayout, { responsive: true });
+
+    // --- CDF chart builder ---
+    function buildCdfChart(samples, p10, p50, p90, divId, title, xLabel, color) {
+        var sorted = samples.slice().sort(function(a, b) { return a - b; });
+        var n = sorted.length;
+
+        // Build CDF points (subsample for performance)
+        var step = Math.max(1, Math.floor(n / 500));
+        var xVals = [], yVals = [];
+        for (var i = 0; i < n; i += step) {
+            xVals.push(sorted[i]);
+            yVals.push(((i + 1) / n) * 100);
+        }
+        // Ensure last point is included
+        if (xVals[xVals.length - 1] !== sorted[n - 1]) {
+            xVals.push(sorted[n - 1]);
+            yVals.push(100);
+        }
+
+        // P10-P90 confidence band: filter CDF points within the range
+        var bandX = [], bandY = [];
+        for (var j = 0; j < xVals.length; j++) {
+            if (xVals[j] >= p10 && xVals[j] <= p90) {
+                bandX.push(xVals[j]);
+                bandY.push(yVals[j]);
+            }
+        }
+        // Ensure band starts and ends exactly at P10/P90
+        if (bandX.length === 0 || bandX[0] > p10) { bandX.unshift(p10); bandY.unshift(10); }
+        if (bandX[bandX.length - 1] < p90) { bandX.push(p90); bandY.push(90); }
+
+        // Upper bound of band (for fill)
+        var bandUpper = {
+            x: bandX,
+            y: bandY,
+            mode: 'lines',
+            line: { width: 0 },
+            showlegend: false,
+            hoverinfo: 'skip'
+        };
+
+        // Lower bound (baseline at 0 for fill)
+        var bandLower = {
+            x: bandX,
+            y: bandX.map(function() { return 0; }),
+            mode: 'lines',
+            line: { width: 0 },
+            fill: 'tonexty',
+            fillcolor: color.replace('1)', '0.12)'),
+            showlegend: false,
+            hoverinfo: 'skip'
+        };
+
+        // Main CDF line
+        var cdfLine = {
+            x: xVals,
+            y: yVals,
+            mode: 'lines',
+            line: { color: color, width: 2.5 },
+            name: 'Cumulative Probability',
+            hovertemplate: '<b>%{x:.1f} ' + xLabel + '</b><br>%{y:.1f}% chance of finishing within<extra></extra>'
+        };
+
+        var layout = {
+            title: title,
+            xaxis: { title: xLabel },
+            yaxis: { title: 'Probability (%)', range: [0, 105] },
+            shapes: [
+                { type: 'line', x0: p10, x1: p10, y0: 0, y1: 100, line: { color: '#28a745', width: 1.5, dash: 'dash' } },
+                { type: 'line', x0: p50, x1: p50, y0: 0, y1: 100, line: { color: '#fd7e14', width: 2.5 } },
+                { type: 'line', x0: p90, x1: p90, y0: 0, y1: 100, line: { color: '#dc3545', width: 1.5, dash: 'dash' } },
+                { type: 'line', x0: 0, x1: 1, y0: 10, y1: 10, xref: 'paper', line: { color: '#28a745', width: 1, dash: 'dot' } },
+                { type: 'line', x0: 0, x1: 1, y0: 50, y1: 50, xref: 'paper', line: { color: '#fd7e14', width: 1, dash: 'dot' } },
+                { type: 'line', x0: 0, x1: 1, y0: 90, y1: 90, xref: 'paper', line: { color: '#dc3545', width: 1, dash: 'dot' } }
+            ],
+            annotations: [
+                { x: p10, y: 10, text: 'P10: ' + p10.toFixed(1), showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { color: '#28a745', size: 11 } },
+                { x: p50, y: 50, text: 'P50: ' + p50.toFixed(1), showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { color: '#fd7e14', size: 12, weight: 'bold' } },
+                { x: p90, y: 90, text: 'P90: ' + p90.toFixed(1), showarrow: true, arrowhead: 0, ax: -40, ay: -25, font: { color: '#dc3545', size: 11 } }
+            ],
+            margin: { t: 50 },
+            hovermode: 'x unified'
+        };
+
+        Plotly.newPlot(divId, [bandLower, bandUpper, cdfLine], layout, { responsive: true });
+    }
+
+    // Effort CDF
+    buildCdfChart(
+        effortData,
+        2.3720930232558137, 3.4799999999999995, 4.875,
+        'effort-cdf-chart',
+        'Cumulative Probability — Effort (man-days)',
+        'man-days',
+        'rgba(13, 110, 253, 1)'
+    );
+
+    // Calendar CDF
+    buildCdfChart(
+        calendarData,
+        3.6654135338345872, 5.338983050847457, 8.529411764705882,
+        'calendar-cdf-chart',
+        'Cumulative Probability — Calendar Duration (days)',
+        'calendar days',
+        'rgba(111, 66, 193, 1)'
+    );
 </script>
 
-<p class="meta">Generated by Horizon v0.1.0 on 2026-03-22T08:39:43.464973+00:00</p>
+<p class="meta">Generated by Horizon v0.1.0 on 2026-03-22T10:22:45.474541+00:00</p>
 
 </body>
 </html>
