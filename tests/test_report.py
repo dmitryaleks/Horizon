@@ -18,7 +18,7 @@ def make_result() -> EstimationResult:
         story_points=8,
         estimated_days=5.0,
         actual_days=7.0,
-        calendar_days=10,
+        started_date="2024-01-02",
         completed_date="2024-01-12",
     )
     return EstimationResult(

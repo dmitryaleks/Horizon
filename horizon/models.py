@@ -8,7 +8,7 @@ class Task(BaseModel):
     story_points: int | float
     estimated_days: float
     actual_days: float
-    calendar_days: int
+    started_date: date
     completed_date: date
 
     @field_validator("estimated_days", "actual_days")
@@ -18,12 +18,9 @@ class Task(BaseModel):
             raise ValueError("must be positive")
         return v
 
-    @field_validator("calendar_days")
-    @classmethod
-    def calendar_must_be_positive(cls, v: int) -> int:
-        if v <= 0:
-            raise ValueError("must be positive")
-        return v
+    @property
+    def calendar_days(self) -> int:
+        return (self.completed_date - self.started_date).days
 
 
 class TeamData(BaseModel):

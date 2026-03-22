@@ -11,7 +11,7 @@ def make_task(id: str = "T-1", story_points: int | float = 5) -> Task:
         story_points=story_points,
         estimated_days=3.0,
         actual_days=4.0,
-        calendar_days=6,
+        started_date="2024-05-26",
         completed_date="2024-06-01",
     )
 

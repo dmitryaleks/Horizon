@@ -38,6 +38,7 @@ def generate_tasks(count: int, team: str, seed: int = 0) -> dict:
         # Spread completed dates over ~12 months
         day_offset = int(rng.uniform(0, 365))
         completed = start_date + timedelta(days=day_offset)
+        started = completed - timedelta(days=calendar_days)
 
         tasks.append({
             "id": f"TASK-{i + 1:03d}",
@@ -45,7 +46,7 @@ def generate_tasks(count: int, team: str, seed: int = 0) -> dict:
             "story_points": int(sp),
             "estimated_days": estimated_days,
             "actual_days": actual_days,
-            "calendar_days": calendar_days,
+            "started_date": started.isoformat(),
             "completed_date": completed.isoformat(),
         })
 

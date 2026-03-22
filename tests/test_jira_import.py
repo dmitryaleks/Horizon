@@ -37,10 +37,11 @@ class TestJiraImport:
         t = next(t for t in result.tasks if t.id == "PROJ-201")
         assert t.calendar_days == 7
 
-    def test_completed_date_from_resolved(self, tmp_path):
+    def test_dates_from_jira(self, tmp_path):
         out = tmp_path / "team.json"
         result = convert(FIXTURE_CSV, "Test", out)
         t = next(t for t in result.tasks if t.id == "PROJ-201")
+        assert str(t.started_date) == "2024-01-05"
         assert str(t.completed_date) == "2024-01-12"
 
     def test_append_merges(self, tmp_path):

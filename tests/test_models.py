@@ -22,7 +22,7 @@ def make_task(**overrides) -> dict:
         "story_points": 5,
         "estimated_days": 3.0,
         "actual_days": 4.5,
-        "calendar_days": 7,
+        "started_date": "2025-01-08",
         "completed_date": "2025-01-15",
     }
     base.update(overrides)
@@ -36,6 +36,12 @@ def test_task_valid():
     assert t.id == "PROJ-1"
     assert t.story_points == 5
     assert t.completed_date == date(2025, 1, 15)
+    assert t.started_date == date(2025, 1, 8)
+
+
+def test_task_calendar_days_computed():
+    t = Task(**make_task())
+    assert t.calendar_days == 7  # Jan 15 - Jan 8
 
 
 def test_task_float_story_points():
@@ -58,11 +64,6 @@ def test_task_negative_estimated_days():
 def test_task_zero_actual_days():
     with pytest.raises(ValidationError):
         Task(**make_task(actual_days=0.0))
-
-
-def test_task_zero_calendar_days():
-    with pytest.raises(ValidationError):
-        Task(**make_task(calendar_days=0))
 
 
 # --- TeamData ---
@@ -92,6 +93,7 @@ def test_team_data_serializes_date_correctly():
     td = TeamData(team="Alpha", tasks=[Task(**make_task())])
     data = json.loads(td.model_dump_json())
     assert data["tasks"][0]["completed_date"] == "2025-01-15"
+    assert data["tasks"][0]["started_date"] == "2025-01-08"
 
 
 # --- EstimationRequest ---

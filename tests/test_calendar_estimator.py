@@ -1,3 +1,5 @@
+from datetime import date, timedelta
+
 import numpy as np
 import pytest
 
@@ -12,14 +14,16 @@ def make_task(
     actual_days: float = 4.0,
     calendar_days: int = 6,
 ) -> Task:
+    completed = date(2024, 6, 1)
+    started = completed - timedelta(days=calendar_days)
     return Task(
         id=id,
         name=f"Task {id}",
         story_points=story_points,
         estimated_days=estimated_days,
         actual_days=actual_days,
-        calendar_days=calendar_days,
-        completed_date="2024-06-01",
+        started_date=started,
+        completed_date=completed,
     )
 
 

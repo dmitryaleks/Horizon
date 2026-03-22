@@ -28,7 +28,8 @@ class TestGenerateTasks:
         for t in data["tasks"]:
             assert t["estimated_days"] > 0
             assert t["actual_days"] > 0
-            assert t["calendar_days"] >= 1
+            assert "started_date" in t
+            assert "completed_date" in t
             assert t["story_points"] in [1, 2, 3, 5, 8, 13]
 
     def test_deterministic_with_seed(self):

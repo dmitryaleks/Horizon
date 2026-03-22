@@ -67,9 +67,8 @@ def convert(
 
             created = pd.to_datetime(row["created_date"])
             resolved = pd.to_datetime(row["resolved_date"])
-            calendar_days = (resolved - created).days
 
-            if calendar_days <= 0:
+            if (resolved - created).days <= 0:
                 skipped += 1
                 warnings.warn(f"Row {idx}: skipping non-positive calendar days (id={row['id']})")
                 continue
@@ -80,7 +79,7 @@ def convert(
                 story_points=float(row["story_points"]),
                 estimated_days=estimated_days,
                 actual_days=actual_days,
-                calendar_days=calendar_days,
+                started_date=created.date(),
                 completed_date=resolved.date(),
             )
             tasks.append(task)
