@@ -14,13 +14,17 @@ build/
 # Claude Code
 .claude/
 
-# Data (keep example files)
+# Data (keep example and demo files)
 data/*
 !data/example_team.json
+!data/demo_team.json
 
-# Reports
-*.html
-!horizon/templates/*.html
+# Reports (keep generated samples)
+reports/*
+!reports/estimate_report.html
+
+# Coverage
+.coverage
 
 # OS
 Thumbs.db

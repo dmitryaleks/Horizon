@@ -164,7 +164,7 @@ Use Plotly CDN for JS. Self-contained HTML output. Test: valid HTML, all section
 ---
 
 ### Task 9: CLI Implementation (`horizon/cli.py`)
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Tasks 3, 7, 8
 **Description:** Full argparse setup with `estimate`, `import` (stub initially), and `validate` subcommands. `cmd_estimate()` orchestrates: load data -> run estimation -> generate report -> print summary. `cmd_validate()` prints dataset stats. Test argument parsing and end-to-end estimate command with fixture data.
 **Acceptance:** `python main.py estimate --data tests/fixtures/sample_team.json --name "Test" --story-points 5 --estimate 3.0 --output test_report.html` produces a valid HTML report.
@@ -172,23 +172,23 @@ Use Plotly CDN for JS. Self-contained HTML output. Test: valid HTML, all section
 ---
 
 ### Task 10: Jira CSV Import Utility
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Tasks 2, 3
-**Description:** Create `gluecode/jira_csv_to_json.py` with configurable COLUMN_MAP at the top (standard Jira names: Issue key, Summary, Story Points, Original Estimate, Time Spent, Created, Resolved). Use pandas to read CSV, map columns. Compute `calendar_days` as `(Resolved - Created).days`. Convert Original Estimate and Time Spent from Jira's hours format to man-days (divide by 8). Handle missing values with warnings. Wire into `cli.py::cmd_import()`. Create test fixture CSV. Update GLUECODE.md.
+**Description:** Create `horizon/jira_csv_to_json.py` with configurable COLUMN_MAP at the top (standard Jira names: Issue key, Summary, Story Points, Original Estimate, Time Spent, Created, Resolved). Use pandas to read CSV, map columns. Compute `calendar_days` as `(Resolved - Created).days`. Convert Original Estimate and Time Spent from Jira's hours format to man-days (divide by 8). Handle missing values with warnings. Wire into `cli.py::cmd_import()`. Create test fixture CSV. Update GLUECODE.md.
 **Acceptance:** `python main.py import --csv tests/fixtures/sample_jira_export.csv --team "Test" --output test_import.json` produces valid Horizon JSON.
 
 ---
 
 ### Task 11: Sample Data Generator
-**Status:** TODO
+**Status:** DONE
 **Depends on:** Task 2
-**Description:** Create `gluecode/sample_data_gen.py`. Generate 50-100 tasks with Fibonacci story points, correlated estimates (0.5-1.5 days/SP), log-normal actuals (biased over estimate), calendar factor ~1.5x, dates spread over 12 months. Accept `--count`, `--team`, `--output` args. Update GLUECODE.md.
+**Description:** Create `horizon/sample_data_gen.py`. Generate 50-100 tasks with Fibonacci story points, correlated estimates (0.5-1.5 days/SP), log-normal actuals (biased over estimate), calendar factor ~1.5x, dates spread over 12 months. Accept `--count`, `--team`, `--output` args. Update GLUECODE.md.
 **Acceptance:** Generated JSON loads successfully and produces reasonable estimation results.
 
 ---
 
 ### Task 12: End-to-End Testing and Polish
-**Status:** TODO
+**Status:** DONE
 **Depends on:** All previous tasks
 **Description:** Run full pipeline end-to-end: generate sample data -> estimate -> verify HTML report. Add `--verbose` flag for progress output. Add friendly error messages for edge cases (too few tasks, story points outside range). Verify all tests pass with `pytest --cov=horizon tests/`.
 **Acceptance:** Full test suite passes. HTML report renders correctly in browser with all interactive elements working.

@@ -1,0 +1,11 @@
+Issue key,Summary,Story Points,Original Estimate,Time Spent,Created,Resolved
+PROJ-201,Build login page,5,24,32,2024-01-05,2024-01-12
+PROJ-202,Add password reset,3,16,20,2024-01-10,2024-01-15
+PROJ-203,Design API endpoints,8,40,56,2024-01-15,2024-01-28
+PROJ-204,Create user dashboard,8,48,44,2024-02-01,2024-02-12
+PROJ-205,Set up monitoring,2,8,8,2024-02-10,2024-02-13
+PROJ-206,Implement caching,5,24,36,2024-02-15,2024-02-26
+PROJ-207,Add search filters,5,24,28,2024-03-01,2024-03-09
+PROJ-208,Write integration tests,3,16,16,2024-03-10,2024-03-15
+PROJ-209,Deploy staging env,2,8,12,2024-03-15,2024-03-19
+PROJ-210,Migrate database schema,13,64,88,2024-03-20,2024-04-08
